@@ -1,0 +1,69 @@
+{
+  "project": "Market Regime Explorer",
+  "assets": {
+    "equity": "spy_adj_close",
+    "bond": "tlt_adj_close",
+    "gold": "gld_adj_close"
+  },
+  "windows": {
+    "volatility": 20,
+    "momentum": 60,
+    "drawdown": 252,
+    "correlation": 60
+  },
+  "annualization_days": 252,
+  "split": {
+    "train_fraction": 0.6,
+    "validation_fraction": 0.2
+  },
+  "selection": {
+    "selected_features": [],
+    "suggested_minimum": 5,
+    "suggested_maximum": 8
+  },
+  "baselines": {
+    "cluster_counts": [
+      2,
+      3,
+      4
+    ],
+    "seeds": [
+      7,
+      21,
+      42
+    ],
+    "gmm_covariance_type": "diag"
+  },
+  "hmm": {
+    "state_counts": [
+      2,
+      3,
+      4
+    ],
+    "seeds": [
+      7,
+      21,
+      42
+    ],
+    "covariance_type": "diag",
+    "max_iterations": 300,
+    "tolerance": 0.01,
+    "max_fit_attempts": 40
+  },
+  "paths": {
+    "results": "results",
+    "figures": "results/figures"
+  },
+  "data_file": "data/market_data.csv",
+  "risk_forecast": {
+    "enabled": false,
+    "horizon_sessions": 5,
+    "high_risk_quantile": 0.75,
+    "logistic_C": [
+      0.1,
+      1.0,
+      10.0
+    ],
+    "nonoverlap_step": 5
+  }
+}

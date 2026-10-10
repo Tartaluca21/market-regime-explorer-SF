@@ -1,0 +1,12 @@
+.venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+# Local data and generated outputs
+data/**/*.csv
+results/*
+!results/.gitkeep
