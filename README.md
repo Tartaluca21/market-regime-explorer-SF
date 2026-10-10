@@ -120,10 +120,9 @@ streamlit run app.py
 
 ## Fonte e pubblicazione / Source and publication
 
-**IT** Fonte: [Stock Market Dataset](https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset), Oleh Onyshchak (jacksoncrow), v2, aggiornamento 2020-04-02; origine dichiarata Yahoo Finance/yfinance. Il CSV è incluso nel pacchetto locale ed escluso da Git tramite `.gitignore`, insieme ai risultati generati.
+**IT** Fonte: [Stock Market Dataset](https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset), Oleh Onyshchak (jacksoncrow), v2. Il dataset è incluso in data/market_data.csv, disponibile su Kaggle, con licenza dichiarata CC0. Le serie SPY, TLT e GLD sono state unite sulle date comuni.
 
-**EN** Source: [Stock Market Dataset](https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset), Oleh Onyshchak (jacksoncrow), v2, updated 2020-04-02; stated upstream Yahoo Finance/yfinance. The CSV is included in the local package and excluded from Git through `.gitignore`, together with generated results.
-
+**EN** Source: [Stock Market Dataset](https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset), Oleh Onyshchak (jacksoncrow), v2.  Datasets available on Kaggle, with a declared CC0 license. The SPY, TLT and GLD series have been merged on their common dates.
 **IT** Questi dati sono già stati esaminati nella preparazione dello starter. Il blocco finale è una valutazione storica didattica, non un test nuovo completamente indipendente.
 
 **EN** These data have already been inspected while preparing the starter. The final block is an educational historical evaluation, not a fully independent new test.

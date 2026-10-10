@@ -7,6 +7,5 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 # Local data and generated outputs
-data/**/*.csv
 results/*
 !results/.gitkeep
