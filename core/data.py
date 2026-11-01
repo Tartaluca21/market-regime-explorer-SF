@@ -28,7 +28,6 @@ def load_data(csv_path: Path) -> pd.DataFrame:
         raise ValueError(f"Colonne mancanti nel CSV: {mancanti}")
 
     # date come datetime, tutto il resto come numeri
-    # (se un valore non è convertibile pandas dà errore invece di inventare qualcosa)
     df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d")
     for col in COLONNE_ATTESE[1:]:
         df[col] = pd.to_numeric(df[col])
@@ -37,9 +36,43 @@ def load_data(csv_path: Path) -> pd.DataFrame:
 
 
 def prepare_prices(data: pd.DataFrame, settings: dict[str, Any]) -> pd.DataFrame:
-    """Da implementare al passaggio 2."""
-    raise NotImplementedError("Da implementare")
-    EN: Prepare equity/bond/gold prices with a unique, increasing date index.
-    Handle missing values, anomalies and dates explicitly.
-    """
-    raise NotImplementedError("Preparazione da implementare / Price preparation not implemented.")?
+    """Tiene i 3 prezzi adjusted, li rinomina equity/bond/gold e mette le date
+    come indice crescente. Non riempie niente: se trova problemi dà errore."""
+    # mappa colonna originale -> nome nuovo, presa dai settings
+    nomi = {
+        settings["assets"]["equity"]: "equity",
+        settings["assets"]["bond"]: "bond",
+        settings["assets"]["gold"]: "gold",
+    }
+
+    # controlli sulle date
+    if data["date"].isna().any():
+        raise ValueError("Ci sono date mancanti")
+    if data["date"].duplicated().any():
+        doppie = data.loc[data["date"].duplicated(), "date"].dt.date.tolist()
+        raise ValueError(f"Date duplicate: {doppie[:5]}")
+
+    # date come indice, solo le 3 colonne di prezzo, rinominate e ordinate
+    prices = data.set_index("date")[list(nomi)].rename(columns=nomi).sort_index()
+
+    # controlli sui prezzi: niente mancanti, niente <= 0
+    if prices.isna().any().any():
+        giorni = prices.index[prices.isna().any(axis=1)].date.tolist()
+        raise ValueError(f"Prezzi mancanti nei giorni: {giorni[:5]}")
+    if (prices <= 0).any().any():
+        giorni = prices.index[(prices <= 0).any(axis=1)].date.tolist()
+        raise ValueError(f"Prezzi non positivi nei giorni: {giorni[:5]}")
+
+    return prices.astype(float)
+
+def trova_rendimenti_estremi(prices: pd.DataFrame, soglia: float = 6.0) -> pd.DataFrame:
+    """Restituisce i giorni in cui almeno un asset ha un rendimento con |z-score| > soglia.
+    Serve solo per controllarli a mano: non toglie niente dai dati."""
+    returns = prices.pct_change(fill_method=None)
+    z = (returns - returns.mean()) / returns.std(ddof=1)
+    estremi = (z.abs() > soglia).any(axis=1)
+
+    tabella = (returns[estremi] * 100).round(2)
+    tabella.columns = [f"{c} (%)" for c in tabella.columns]
+    tabella["z max"] = z[estremi].abs().max(axis=1).round(1)
+    return tabella
