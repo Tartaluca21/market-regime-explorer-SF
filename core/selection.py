@@ -1,30 +1,45 @@
-"""IT: Selezione e preprocessing. EN: Feature selection and preprocessing."""
+"""Selezione e preprocessing."""
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
-if TYPE_CHECKING:
-    import pandas as pd
+import pandas as pd
+
+
+def dividi_date(features: pd.DataFrame, settings: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Divide i giorni dopo il warm-up in training / validation / test (60/20/20),
+    in ordine cronologico, senza sovrapposizioni e senza mescolare.
+    Restituisce per ogni blocco data di inizio, data di fine (incluse) e numero di giorni."""
+    n = len(features)
+    n_train = int(n * settings["split"]["train_fraction"])
+    n_val = int(n * settings["split"]["validation_fraction"])
+
+    posizioni = {
+        "train": (0, n_train),
+        "validation": (n_train, n_train + n_val),
+        "test": (n_train + n_val, n),     # il resto va al test
+    }
+    confini = {}
+    for nome, (inizio, fine) in posizioni.items():
+        if fine - inizio < 1:
+            raise ValueError(f"Il blocco {nome} è vuoto: servono più dati")
+        date = features.index[inizio:fine]
+        confini[nome] = {
+            "start": date[0].strftime("%Y-%m-%d"),
+            "end": date[-1].strftime("%Y-%m-%d"),
+            "n_obs": len(date),
+        }
+    return confini
 
 
 def select_features(feature_bank: pd.DataFrame, training_end: str,
                     settings: dict[str, Any]) -> list[str]:
-    """IT: Restituire la lista ordinata delle feature scelte usando solo il training.
-    La data finale è inclusa; valutare ridondanza e variazione rispettando le unità.
-
-    EN: Return the ordered feature list selected using training observations only.
-    The end date is inclusive; assess redundancy and variation with attention to units.
-    """
-    raise NotImplementedError("Selezione da implementare / Feature selection not implemented.")
+    """Da implementare al passaggio 3."""
+    raise NotImplementedError("Da implementare")
 
 
 def prepare_model_data(feature_bank: pd.DataFrame, selected_features: list[str],
                        settings: dict[str, Any]) -> dict[str, Any]:
-    """IT: Restituire feature_names, scaler, boundaries e scaled_blocks con date.
-    Dividere dopo il warm-up; selezione e scaler restano fissi dopo il training.
-
-    EN: Return feature_names, scaler, boundaries and dated scaled_blocks.
-    Split after warm-up; selection and scaling remain fixed after training.
-    """
-    raise NotImplementedError("Preprocessing da implementare / Preprocessing not implemented.")
+    """Da implementare al passaggio 4."""
+    raise NotImplementedError("Da implementare")
