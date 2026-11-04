@@ -17,9 +17,30 @@
     "validation_fraction": 0.2
   },
   "selection": {
-    "selected_features": [],
+    "selected_features": [
+      "equity_volatility",
+      "bond_volatility",
+      "gold_volatility",
+      "equity_momentum",
+      "bond_momentum",
+      "gold_momentum",
+      "equity_bond_correlation",
+      "equity_gold_correlation"
+    ],
     "suggested_minimum": 5,
-    "suggested_maximum": 8
+    "suggested_maximum": 8,
+    "candidate_subsets": {
+      "principale_soglia_0.7": [
+        "equity_volatility", "bond_volatility", "gold_volatility",
+        "equity_momentum", "bond_momentum", "gold_momentum",
+        "equity_bond_correlation", "equity_gold_correlation"
+      ],
+      "alternativo_soglia_0.6": [
+        "equity_volatility", "gold_volatility",
+        "equity_momentum", "bond_momentum", "gold_momentum",
+        "equity_bond_correlation", "equity_gold_correlation"
+      ]
+    }
   },
   "baselines": {
     "cluster_counts": [

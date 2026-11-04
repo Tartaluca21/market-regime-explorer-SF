@@ -58,7 +58,41 @@ def grafico_correlazioni(corr: pd.DataFrame, titolo: str):
     fig.tight_layout()
     return fig
 
+# --- Grafici dei gruppi (notebook 02) ---
 
+COLORI_GRUPPI = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]
+
+
+def grafico_timeline_gruppi(indice: pd.Series, label: pd.Series, titolo: str,
+                            confini: dict[str, Any] | None = None):
+    """Linea dell'indice (es. SPY base 100, scala log) con lo sfondo colorato
+    secondo il gruppo assegnato ogni giorno, e linee verticali all'inizio di validation e test."""
+    label = label.loc[indice.index]
+    k = int(label.max()) + 1
+    fig, ax = plt.subplots(figsize=(11, 4))
+    # sfondo: un rettangolo colorato per ogni tratto consecutivo con lo stesso gruppo
+    valori = label.to_numpy()
+    date = label.index
+    inizio = 0
+    for i in range(1, len(valori) + 1):
+        if i == len(valori) or valori[i] != valori[inizio]:
+            fine = date[i] if i < len(valori) else date[-1]
+            ax.axvspan(date[inizio], fine, color=COLORI_GRUPPI[valori[inizio] % 4], alpha=0.25, linewidth=0)
+            inizio = i
+    ax.plot(indice.index, indice, color="black", linewidth=1.2)
+    ax.set_yscale("log")
+    ax.set_ylabel("SPY, base 100 (scala log)")
+    if confini:
+        for nome in ["validation", "test"]:
+            data = pd.Timestamp(confini[nome]["start"])
+            ax.axvline(data, color="grey", linestyle="--", linewidth=1)
+            ax.text(data, ax.get_ylim()[1], f" inizio {nome}", va="top", fontsize=8, color="grey")
+    for g in range(k):
+        ax.fill_between([], [], color=COLORI_GRUPPI[g % 4], alpha=0.5, label=f"gruppo {g}")
+    ax.legend(loc="upper left", ncol=k, fontsize=8)
+    ax.set_title(titolo)
+    fig.tight_layout()
+    return fig
 # --- Da implementare nei notebook successivi ---
 
 def build_charts(prices: pd.DataFrame, results: dict[str, Any],
