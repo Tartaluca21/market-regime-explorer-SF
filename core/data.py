@@ -56,11 +56,13 @@ def prepare_prices(data: pd.DataFrame, settings: dict[str, Any]) -> pd.DataFrame
     prices = data.set_index("date")[list(nomi)].rename(columns=nomi).sort_index()
 
     # controlli sui prezzi: niente mancanti, niente <= 0
+    indice = pd.DatetimeIndex(prices.index)
+
     if prices.isna().any().any():
-        giorni = prices.index[prices.isna().any(axis=1)].date.tolist()
+        giorni = indice[prices.isna().any(axis=1).to_numpy()].date.tolist()
         raise ValueError(f"Prezzi mancanti nei giorni: {giorni[:5]}")
     if (prices <= 0).any().any():
-        giorni = prices.index[(prices <= 0).any(axis=1)].date.tolist()
+        giorni = indice[(prices <= 0).any(axis=1).to_numpy()].date.tolist()
         raise ValueError(f"Prezzi non positivi nei giorni: {giorni[:5]}")
 
     return prices.astype(float)
